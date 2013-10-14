@@ -154,14 +154,15 @@ time_since_last=$((now-last_run))
 # get some more info from the yaml file
 config=$(awk '/config:/ {print $2}' ${lastrunfile})
 version=$(awk '/puppet:/ {print $2}' ${lastrunfile})
+changed=$(awk '/changed:/ {print $2}' ${lastrunfile})
 failed=$(awk '/failed:/ {print $2}' ${lastrunfile})
 failure=$(awk '/failure:/ {print $2}' ${lastrunfile})
 failed_to_restart=$(awk '/failed_to_restart:/ {print $2}' ${lastrunfile})
 
 # if any of the values above doesn't return raise an error
-[ -z "${last_run}" -o -z "${config}" -o -z "${version}" -o -z "${failed}" -o -z "${failure}" -o -z "${failed_to_restart}" ] && result 1
+[ -z "${last_run}" -o -z "${config}" -o -z "${version}" -o -z "${changed}" -o -z "${failed}" -o -z "${failure}" -o -z "${failed_to_restart}" ] && result 1
 # if anything went wrong last run => crit
-[ ${failed} -gt 0 -o  ${failure} -gt 0 -o ${failed_to_restart} -gt 0 ] && result 6
+[ ${changed} -gt 0 -o ${failed} -gt 0 -o  ${failure} -gt 0 -o ${failed_to_restart} -gt 0 ] && result 6
 
 # if we come here it works!
 result 0
